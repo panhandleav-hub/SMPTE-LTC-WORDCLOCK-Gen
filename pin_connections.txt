@@ -1,0 +1,182 @@
+# TEENSY 4.1 PIN CONNECTIONS QUICK REFERENCE
+
+## LEFT SIDE PINS (Top to Bottom)
+```
+Pin | Function        | Connect To
+----|-----------------|------------------
+GND | Ground          | Common Ground
+0   | (RX1)          | Not Used
+1   | (TX1)          | Not Used  
+2   | Word Clock 1    | 75Ω → BNC #1
+3   | Word Clock 2    | 75Ω → BNC #2
+4   | Power LED       | 220Ω → Green LED
+5   | LTC Active LED  | 220Ω → Yellow LED
+6   | Encoder A       | Rotary Encoder A
+7   | Encoder B       | Rotary Encoder B
+8   | Encoder Button  | Rotary Encoder SW
+9   | (Reserved)      | Audio Board
+10  | (Reserved)      | Audio Board
+11  | (Reserved)      | Audio Board
+12  | (Reserved)      | Audio Board
+```
+
+## RIGHT SIDE PINS (Top to Bottom)
+```
+Pin | Function        | Connect To
+----|-----------------|------------------
+VIN | USB Power       | (Internal)
+GND | Ground          | Common Ground
+3.3V| 3.3V Power      | OLED VCC, Encoder VCC
+23  | (Reserved)      | Audio Board
+22  | (Reserved)      | Audio Board
+21  | (Reserved)      | Audio Board
+20  | (Reserved)      | Audio Board
+19  | SCL (I2C Clock) | OLED SCL
+18  | SDA (I2C Data)  | OLED SDA
+17  | (Free)          | Not Used
+16  | (Free)          | Not Used
+15  | (Reserved)      | Audio Board
+14  | (Reserved)      | Audio Board
+13  | (Reserved)      | Audio Board
+```
+
+## AUDIO BOARD CONNECTIONS (Automatic via Stacking)
+```
+Audio Board Pin | Teensy Pin | Function
+----------------|------------|----------
+LRCLK          | 20         | I2S Frame Clock
+BCLK           | 21         | I2S Bit Clock  
+DIN            | 7          | I2S Data In
+DOUT           | 8          | I2S Data Out
+MCLK           | 23         | I2S Master Clock
+SCL            | 19         | I2C Control
+SDA            | 18         | I2C Control
+LINE OUT L     | -          | To Transformer
+LINE OUT R     | -          | Optional 2nd Out
+```
+
+## COMPONENT WIRING
+
+### BNC Word Clock Outputs
+```
+Teensy Pin → 75Ω Resistor → BNC Center Pin
+                          └─ BNC Shield → GND
+```
+
+### Audio Transformer (TY-141P)
+```
+Audio Board Line Out L → 10µF Cap → Pin 1 (Primary)
+Pin 2 (Primary) → GND
+Pin 3 (Secondary) → TRS Tip & 10K Pot Wiper
+Pin 4 (Secondary) → TRS Ring & 10K Pot End
+TRS Sleeve → GND
+```
+
+### OLED Display (I2C)
+```
+OLED Pin | Teensy Pin | Wire Color (suggested)
+---------|------------|----------------------
+GND      | GND        | Black
+VCC      | 3.3V       | Red
+SCL      | 19         | Yellow
+SDA      | 18         | Blue
+```
+
+### Rotary Encoder
+```
+Encoder Pin | Teensy Pin | Wire Color (suggested)
+------------|------------|----------------------
+GND         | GND        | Black
++           | 3.3V       | Red
+A           | 6          | Green
+B           | 7          | White
+SW          | 8          | Blue
+```
+
+### LEDs
+```
+LED Color | Teensy Pin | Resistor | Purpose
+----------|------------|----------|--------
+Green     | 4          | 220Ω     | Power
+Yellow    | 5          | 220Ω     | LTC Active
+(Cathodes to GND)
+```
+
+## GROUNDING SCHEME
+
+Use STAR GROUND configuration:
+```
+     Teensy GND
+          |
+    +-----------+
+    |  STAR     |
+    |  GROUND   |
+    |  POINT    |
+    +-----------+
+     |  |  |  |
+     |  |  |  +-- OLED GND
+     |  |  +----- Encoder GND
+     |  +-------- BNC Shields
+     +----------- Audio GND (TRS Sleeve, Transformer)
+```
+
+## POWER DISTRIBUTION
+
+```
+USB 5V → Teensy VIN
+       ↓
+Teensy 3.3V Regulator
+       ↓
+    3.3V Rail → OLED VCC
+              → Encoder VCC
+              
+Total Current: ~200mA typical
+```
+
+## CABLE MANAGEMENT TIPS
+
+1. Keep audio cables away from digital signals
+2. Use twisted pairs for I2C (SDA/SCL)
+3. Keep word clock lines short and direct
+4. Route LED wires along enclosure edges
+5. Secure USB cable with hot glue
+
+## TEST POINTS
+
+Add test points for troubleshooting:
+- TP1: 3.3V (verify power)
+- TP2: Word Clock (scope probe)
+- TP3: LTC Audio (before transformer)
+- TP4: I2C SDA (logic analyzer)
+- TP5: I2C SCL (logic analyzer)
+
+## COLOR CODE STANDARD (Suggested)
+
+- RED: Power (3.3V, 5V)
+- BLACK: Ground
+- YELLOW: Clock signals
+- BLUE: Data signals
+- GREEN: Control signals
+- WHITE: Audio signals
+
+## ASSEMBLY ORDER
+
+1. Install Teensy + Audio Board
+2. Wire power connections first
+3. Add I2C devices (OLED)
+4. Connect encoder
+5. Wire LEDs
+6. Add word clock outputs
+7. Wire audio path last
+8. Test each subsystem before closing
+
+## TESTING CHECKLIST
+
+□ Power LED lights when USB connected
+□ OLED displays text
+□ Encoder changes values on display
+□ Word clock present on BNC (scope)
+□ LTC audio on TRS jack (headphones)
+□ No shorts between power and ground
+□ All connections secure
+□ Enclosure properly grounded
